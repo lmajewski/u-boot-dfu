@@ -387,7 +387,7 @@ struct clk *clk_get_parent(struct clk *clk)
 	debug("%s(clk=%p)\n", __func__, clk);
 
 	pdev = dev_get_parent(clk->dev);
-	pclk = (struct clk *)dev_get_driver_data(pdev);
+	pclk = dev_get_clk_ptr(pdev);
 	if (!pclk)
 		return ERR_PTR(-ENODEV);
 
@@ -501,7 +501,7 @@ int clk_get_by_id(ulong id, struct clk **clkp)
 		return ret;
 
 	uclass_foreach_dev(dev, uc) {
-		struct clk *clk = (struct clk *)dev_get_driver_data(dev);
+		struct clk *clk = dev_get_clk_ptr(dev);
 
 		if (clk && clk->id == id) {
 			*clkp = clk;
