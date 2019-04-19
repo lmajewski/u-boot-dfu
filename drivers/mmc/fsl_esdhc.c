@@ -1085,9 +1085,16 @@ static int esdhc_getcd_common(struct fsl_esdhc_priv *priv)
 #if CONFIG_IS_ENABLED(DM_MMC)
 	if (priv->non_removable)
 		return 1;
+
 #ifdef CONFIG_DM_GPIO
-	if (dm_gpio_is_valid(&priv->cd_gpio))
-		return dm_gpio_get_value(&priv->cd_gpio);
+	printf("%s: GPIO: desc: 0x%p\n", __func__, (&priv->cd_gpio)->dev);
+	if (dm_gpio_is_valid(&priv->cd_gpio)) {
+		printf("%s: valid GPIO\n", __func__);
+		int ret;
+		ret = dm_gpio_get_value(&priv->cd_gpio);
+		printf("%s: value: %d\n", __func__, ret);
+		return ret;
+	}
 #endif
 #endif
 
@@ -1496,6 +1503,7 @@ static int fsl_esdhc_probe(struct udevice *dev)
 	 } else {
 		priv->non_removable = 0;
 #ifdef CONFIG_DM_GPIO
+		printf("CD-GPIO\n");
 		gpio_request_by_name(dev, "cd-gpios", 0, &priv->cd_gpio,
 				     GPIOD_IS_IN);
 #endif
