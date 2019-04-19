@@ -5,7 +5,7 @@
  * (C) Copyright 2012
  * Marek Vasut <marex@denx.de>
  */
-
+#define DEBUG
 #include <common.h>
 #include <errno.h>
 #include <dm/device.h>
@@ -57,10 +57,14 @@ int lists_bind_drivers(struct udevice *parent, bool pre_reloc_only)
 	struct udevice *dev;
 	int result = 0;
 	int ret;
-
+	if (pre_reloc_only)
+		printascii("PRELOCK ONLY!\n");
 	for (entry = info; entry != info + n_ents; entry++) {
 		ret = device_bind_by_name(parent, pre_reloc_only, entry, &dev);
 		if (ret && ret != -EPERM) {
+			printascii("NO match - driver:");
+			printascii(entry->name);
+			printascii("\n");
 			dm_warn("No match for driver '%s'\n", entry->name);
 			if (!result || ret != -ENOENT)
 				result = ret;
@@ -162,6 +166,7 @@ int lists_bind_fdt(struct udevice *parent, ofnode node, struct udevice **devp,
 		compat = compat_list + i;
 		pr_debug("   - attempt to match compatible string '%s'\n",
 			 compat);
+		printascii("compatible:"); printascii(compat);printascii("\n");
 
 		for (entry = driver; entry != driver + n_ents; entry++) {
 			ret = driver_check_compatible(entry->of_match, &id,
@@ -173,14 +178,16 @@ int lists_bind_fdt(struct udevice *parent, ofnode node, struct udevice **devp,
 			continue;
 
 		if (pre_reloc_only) {
+			printascii("PRE RELOC ONLY\n");
 			if (!dm_ofnode_pre_reloc(node) &&
 			    !(entry->flags & DM_FLAG_PRE_RELOC))
 				return 0;
 		}
-
+		printascii("match:"); printascii(entry->name);
 		pr_debug("   - found match at '%s'\n", entry->name);
 		ret = device_bind_with_driver_data(parent, entry, name,
 						   id->data, node, &dev);
+		printascii("  RET:"); printhex4(ret);printascii("\n");
 		if (ret == -ENODEV) {
 			pr_debug("Driver '%s' refuses to bind\n", entry->name);
 			continue;
