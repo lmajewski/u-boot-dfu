@@ -247,10 +247,6 @@ int device_bind_by_name(struct udevice *parent, bool pre_reloc_only,
 	struct driver *drv;
 	uint platdata_size = 0;
 
-	printascii("DRV: ");
-	printascii(info->name);
-	printascii("\n");
-
 	drv = lists_driver_lookup_name(info->name);
 	if (!drv)
 		return -ENOENT;

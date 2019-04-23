@@ -2,7 +2,7 @@
 /*
  * Copyright (c) 2011 The Chromium OS Authors.
  */
-#define DEBUG
+
 #ifndef USE_HOSTCC
 #include <common.h>
 #include <boot_fit.h>

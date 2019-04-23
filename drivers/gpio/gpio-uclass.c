@@ -711,10 +711,9 @@ int gpio_request_by_name(struct udevice *dev, const char *list_name, int index,
 
 	ret = dev_read_phandle_with_args(dev, list_name, "#gpio-cells", 0,
 					 index, &args);
-	printf("%s: name: %s ret: %d ", __func__, list_name, ret);
-	ret = gpio_request_tail(ret, dev_ofnode(dev), &args, list_name,
+
+	return gpio_request_tail(ret, dev_ofnode(dev), &args, list_name,
 				 index, desc, flags, index > 0);
-	printf("ret tail: %d\n", ret);
 }
 
 int gpio_request_list_by_name_nodev(ofnode node, const char *list_name,
