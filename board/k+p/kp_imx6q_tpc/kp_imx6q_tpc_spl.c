@@ -4,7 +4,7 @@
  *
  * Copyright (C) 2018 Lukasz Majewski <lukma@denx.de>
  */
-#define DEBUG
+
 #include <common.h>
 #include <asm/arch/clock.h>
 #include <asm/arch/crm_regs.h>
@@ -14,7 +14,6 @@
 #include <asm/io.h>
 #include <errno.h>
 #include <spl.h>
-#include <debug_uart.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -204,27 +203,6 @@ void board_boot_order(u32 *spl_boot_list)
 	spl_boot_list[1] = BOOT_DEVICE_MMC1;
 }
 
-#if 1
-#include <asm/arch/iomux.h>
-#include <asm/arch/mx6-pins.h>
-#include <asm/mach-imx/iomux-v3.h>
-
-#define UART_PAD_CTRL							\
-	(PAD_CTL_PUS_100K_UP | PAD_CTL_SPEED_MED | PAD_CTL_DSE_40ohm |	\
-	 PAD_CTL_SRE_FAST  | PAD_CTL_HYS)
-
-/* UART */
-static iomux_v3_cfg_t const uart1_pads[] = {
-	IOMUX_PADS(PAD_SD3_DAT7__UART1_TX_DATA	| MUX_PAD_CTRL(UART_PAD_CTRL)),
-	IOMUX_PADS(PAD_SD3_DAT6__UART1_RX_DATA	| MUX_PAD_CTRL(UART_PAD_CTRL)),
-};
-
-static void setup_iomux_uart(void)
-{
-	SETUP_IOMUX_PADS(uart1_pads);
-}
-#endif
-
 void board_init_f(ulong dummy)
 {
 	/* setup AIPS and disable watchdog */
@@ -235,12 +213,10 @@ void board_init_f(ulong dummy)
 
 	/* setup GP timer */
 	timer_init();
-	setup_iomux_uart();
-	debug_uart_init();
-	printascii("\n");
+
 	/* Early - pre reloc - driver model setup */
 	spl_early_init();
-	printascii("BBB\n");
+
 	/* UART clocks enabled and gd valid - init serial console */
 	preloader_console_init();
 
