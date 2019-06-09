@@ -170,4 +170,11 @@ config XILINX_TB_WATCHDOG
 	   Select this to enable Xilinx Axi watchdog timer, which can be found on some
 	   Xilinx Microblaze Platforms.
 
+config SPL_WDT
+	bool "Enable driver model for watchdog timer drivers in SPL"
+	depends on SPL_DM
+	help
+	  Enable driver model for watchdog timer in SPL.
+	  This is similar to CONFIG_WDT in U-Boot.
+
 endmenu
