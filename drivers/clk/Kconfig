@@ -140,4 +140,12 @@ config CLK_MPC83XX
 	help
 	  Support for the clock driver of the MPC83xx series of SoCs.
 
+config SANDBOX_CLK_CCF
+	bool "Sandbox Common Clock Framework [CCF] support "
+	depends on SANDBOX && CLK
+	select CLK_CCF
+	help
+	  Enable this option if you want to test the Linux kernel's Common
+	  Clock Framework [CCF] code in U-Boot's Sandbox clock driver.
+
 endmenu
