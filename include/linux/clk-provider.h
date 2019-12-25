@@ -155,6 +155,8 @@ struct clk_composite {
 
 #define to_clk_composite(_clk) container_of(_clk, struct clk_composite, clk)
 
+#define CLK_GATE2_SINGLE_BIT BIT(0)
+
 struct clk_gate2 {
 	struct clk clk;
 	void __iomem	*reg;

@@ -29,8 +29,12 @@ static int clk_gate2_enable(struct clk *clk)
 	u32 reg;
 
 	reg = readl(gate->reg);
-	reg &= ~(3 << gate->bit_idx);
-	reg |= gate->cgr_val << gate->bit_idx;
+	if (gate->flags & CLK_GATE2_SINGLE_BIT) {
+		reg |= BIT(gate->bit_idx);
+	} else {
+		reg &= ~(3 << gate->bit_idx);
+		reg |= gate->cgr_val << gate->bit_idx;
+	}
 	writel(reg, gate->reg);
 
 	return 0;
@@ -42,7 +46,10 @@ static int clk_gate2_disable(struct clk *clk)
 	u32 reg;
 
 	reg = readl(gate->reg);
-	reg &= ~(3 << gate->bit_idx);
+	if (gate->flags & CLK_GATE2_SINGLE_BIT)
+		reg &= ~BIT(gate->bit_idx);
+	else
+		reg &= ~(3 << gate->bit_idx);
 	writel(reg, gate->reg);
 
 	return 0;
