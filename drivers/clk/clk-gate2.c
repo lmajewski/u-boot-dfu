@@ -10,8 +10,7 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  *
- * Gated clock implementation
- *
+ * Gated clock which redirects rate functions to its parent clock
  */
 
 #include <common.h>
@@ -21,19 +20,8 @@
 #include <dm/device.h>
 #include <linux/clk-provider.h>
 #include <clk.h>
-#include "clk.h"
 
-#define UBOOT_DM_CLK_IMX_GATE2 "imx_clk_gate2"
-
-struct clk_gate2 {
-	struct clk clk;
-	void __iomem	*reg;
-	u8		bit_idx;
-	u8		cgr_val;
-	u8		flags;
-};
-
-#define to_clk_gate2(_clk) container_of(_clk, struct clk_gate2, clk)
+#define UBOOT_DM_CLK_GATE2 "clk_gate2"
 
 static int clk_gate2_enable(struct clk *clk)
 {
@@ -97,7 +85,7 @@ struct clk *clk_register_gate2(struct device *dev, const char *name,
 
 	clk = &gate->clk;
 
-	ret = clk_register(clk, UBOOT_DM_CLK_IMX_GATE2, name, parent_name);
+	ret = clk_register(clk, UBOOT_DM_CLK_GATE2, name, parent_name);
 	if (ret) {
 		kfree(gate);
 		return ERR_PTR(ret);
@@ -107,7 +95,7 @@ struct clk *clk_register_gate2(struct device *dev, const char *name,
 }
 
 U_BOOT_DRIVER(clk_gate2) = {
-	.name	= UBOOT_DM_CLK_IMX_GATE2,
+	.name	= UBOOT_DM_CLK_GATE2,
 	.id	= UCLASS_CLK,
 	.ops	= &clk_gate2_ops,
 	.flags = DM_FLAG_PRE_RELOC,

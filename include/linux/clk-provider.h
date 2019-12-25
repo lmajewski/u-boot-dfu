@@ -90,10 +90,6 @@ struct clk_gate {
 #define CLK_GATE_HIWORD_MASK		BIT(1)
 
 extern const struct clk_ops clk_gate_ops;
-struct clk *clk_register_gate(struct device *dev, const char *name,
-			      const char *parent_name, unsigned long flags,
-			      void __iomem *reg, u8 bit_idx,
-			      u8 clk_gate_flags, spinlock_t *lock);
 
 struct clk_div_table {
 	unsigned int	val;
@@ -159,6 +155,16 @@ struct clk_composite {
 
 #define to_clk_composite(_clk) container_of(_clk, struct clk_composite, clk)
 
+struct clk_gate2 {
+	struct clk clk;
+	void __iomem	*reg;
+	u8		bit_idx;
+	u8		cgr_val;
+	u8		flags;
+};
+
+#define to_clk_gate2(_clk) container_of(_clk, struct clk_gate2, clk)
+
 struct clk *clk_register_composite(struct device *dev, const char *name,
 		const char * const *parent_names, int num_parents,
 		struct clk *mux_clk, const struct clk_ops *mux_ops,
@@ -183,6 +189,16 @@ struct clk *clk_register_mux(struct device *dev, const char *name,
 		unsigned long flags,
 		void __iomem *reg, u8 shift, u8 width,
 		u8 clk_mux_flags);
+
+struct clk *clk_register_gate(struct device *dev, const char *name,
+			      const char *parent_name, unsigned long flags,
+			      void __iomem *reg, u8 bit_idx,
+			      u8 clk_gate_flags, spinlock_t *lock);
+
+struct clk *clk_register_gate2(struct device *dev, const char *name,
+			       const char *parent_name, unsigned long flags,
+			       void __iomem *reg, u8 bit_idx, u8 cgr_val,
+			       u8 clk_gate_flags);
 
 const char *clk_hw_get_name(const struct clk *hw);
 ulong clk_generic_get_rate(struct clk *clk);
